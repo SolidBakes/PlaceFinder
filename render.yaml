@@ -1,0 +1,10 @@
+services:
+  - type: static_site
+    name: PlaceFinder
+    env: static
+    buildCommand: ""
+    publishPath: "./"
+    routes:
+      - src: /css/(.*)
+        headers:
+          Content-Type: text/css
