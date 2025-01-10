@@ -4,6 +4,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const currentCityEl = document.getElementById('current-city');
     const loadingEl = document.getElementById('loading');
     mapDiv = document.getElementById('map');
+
+    function shiftBackground() {
+      document.body.style.backgroundPositionY = "-50px"; // Beispielwert, anpassen nach Bedarf
+  }
+  
+  // In der geocodeAddress-Funktion nach dem Aufruf von initializePlaces
+  shiftBackground();
   
     function displayCityFromCoordinates(lat, lng) {
       const geocoder = new google.maps.Geocoder();
