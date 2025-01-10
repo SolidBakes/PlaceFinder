@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PlaceFinder</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <!-- Google Maps JavaScript API einbinden -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAjgqrcKBeSRRUFvcDRbTJFCdtkR4191Lk&libraries=places" defer></script>
+  <script src="js/script.js" defer></script>
+</head>
+<body>
+  <header>
+    <h1>PlaceFinder in Ihrer Nähe</h1>
+  </header>
+
+  <main>
+    <!-- Suchleiste für manuelle Standortangabe -->
+    <div id="location-input">
+      <input type="text" id="address" placeholder="Geben Sie Ihren Standort ein" />
+      <button id="address-search">Suchen</button>
+    </div>
+
+    <!-- Anzeige des verwendeten Stadtteils/Ortes -->
+    <div id="current-city" style="margin-top:10px; font-weight:bold;"></div>
+
+    <div id="loading">Standort wird ermittelt...</div>
+    <div id="kategorien" style="display: none;">
+      <section id="essenTrinken">
+        <h2>Essen & Trinken</h2>
+        <ul id="listeEssenTrinken"></ul>
+      </section>
+      <section id="tankenAuto">
+        <h2>Tanken & Auto</h2>
+        <ul id="listeTankenAuto"></ul>
+      </section>
+      <section id="freizeitEinkaufen">
+        <h2>Freizeit & Einkaufen</h2>
+        <ul id="listeFreizeitEinkaufen"></ul>
+      </section>
+    </div>
+    <div id="map" style="height: 300px; width: 25%; display: none; margin-left: auto;"></div>
+  </main>
+
+  <footer>
+    <p>© 2025 PlaceFinder</p>
+  </footer>
+</body>
+</html>
