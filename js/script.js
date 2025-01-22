@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
   startSearchBtn.addEventListener('click', function() {
     // Eingegebenen Wert holen und in Zahl umwandeln
     const inputValue = radiusInput.value;
-    const radius = parseInt(inputValue, 10) || 25000;
+    const radius = parseInt(inputValue, 10) || 2000;
 
     console.log(`Suche Orte im Radius von ${radius} Metern...`);
     // Unsere Places-Suche starten
