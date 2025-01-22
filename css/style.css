@@ -1,96 +1,160 @@
+/* =========== Basis und Layout =========== */
 
-header {
-    margin: 0 auto;
-    
-}
-/* Grundlegende Stile */
-body {
-    font-family: Arial, sans-serif;
+/* HTML/BODY nur Grundreset, kein Flex-Center mehr */
+html, body {
     margin: 0;
     padding: 0;
-    background-image: url('../img/background.png');
-    background-size: cover; /* Deckt den gesamten Hintergrund ab */
-    background-position: center; /* Zentriert das Bild */
-    background-repeat: no-repeat; /* Verhindert das Wiederholen des Bildes */
-    
-}
-/* Container für den gesamten Seiteninhalt */
-.container {
-    max-width: 1200px;  /* Maximale Breite, anpassbar je nach Bedarf */
-    margin: 0 auto;     /* Zentriert den Container horizontal */
-    padding: 1em;       /* Optionaler Abstand innen */
-    
+    /* Höhe nicht festlegen oder nur min-height: 100%; 
+       damit die Seite normal scrollen kann */
+    min-height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, 
+                 "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   }
   
-
-
-/* Hauptinhalt */
-main {
-    padding: 1em;
-}
-
-/* Abschnittsstile */
-section {
-    max-width: 600px;
-    margin-bottom: 2em;
-}
-
-/* Überschriften */
-h2 {
-    border-bottom: 2px solid #4CAF50;
-    padding-bottom: 0.5em;
-}
-
-/* Listenstile */
-ul {
-    max-width: 600px;
-    list-style-type: none;
-    padding: 0;
+  /* Hintergrundbild-Einstellungen */
+  body {
+    background-image: url('../img/background.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    /* Keine Flex-Zentrierung mehr, damit das Layout 
+       sich nach unten erweitern kann */
+  }
+  
+  /* =========== Hauptcontainer =========== */
+  .container {
+    max-width: 800px;    /* Anpassen nach Wunsch */
+    width: 100%;
+    margin: 2em auto;    /* Nur horizontal zentrieren */
+    padding: 2em;
     
+    /* iOS-Look: leichte Transparenz + Blur */
+    background-color: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     
-}
-
-li {
-    max-width: 600px;
-    padding: 0.5em 0;
-    border-bottom: 1px solid #ddd;
-    
-    
-}
-
-/* Ladeanzeige */
-#loading {
+    /* Rundungen & Schatten */
+    border-radius: 1em;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* =========== Header, Main, Footer =========== */
+  
+  header {
     text-align: center;
-    font-size: 1.2em;
-}
-
-/* Footer-Stile */
-footer {
+    margin-bottom: 1em;  /* Abstand zum Hauptinhalt */
+  }
+  
+  main {
+    /* Kann ganz normal wachsen; 
+       kein fixed- oder flex-Zwang */
+    width: 100%;
+    padding: 1em 0;
+  }
+  
+  footer {
     background-color: #f1f1f1;
     text-align: center;
-    padding: 0em;
+    padding: 1em;
+    
+    /* Wenn du keinen fixierten Footer willst,
+       entferne position, bottom und left */
     position: fixed;
     width: 100%;
     bottom: 0;
-}
-/* Stelle sicher, dass die Kategorien-Listen sichtbar sind */
-#kategorien {
-    margin-top: 1em;
+    left: 0;
     
+    border-top-left-radius: 1em;
+    border-top-right-radius: 1em;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+  }
+  
+  /* =========== Großer Title & Gefundener Ort =========== */
+  
+  #appTitle {
+    font-size: 2.5rem; 
+    font-weight: 800;  
+    color: #333;
+    margin: 0.5em 0 0.3em 0; 
+  }
+  
+  #current-city {
+    font-size: 1.4rem;
+    font-weight: 500;
+    font-family: "Georgia", serif;
+    color: #444;
+    margin-bottom: 1em; 
+  }
+  
+  /* =========== Sektionen & Überschriften =========== */
+  
+  section {
+    max-width: 600px;
+    margin: 2em auto;
+  }
+  
+  h2 {
+    border-bottom: 2px solid #4CAF50;
+    padding-bottom: 0.5em;
+    margin-bottom: 1em;
+  }
+  
+  /* =========== Listen & Platzhalter =========== */
+  ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 1em 0;
+  }
+  
+  li {
+    padding: 0.5em 0;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  /* =========== Links: max 250px Breite + Text-Overflow =========== */
+  a {
+    display: inline-block;
+    max-width: 250px;         
+    white-space: nowrap;      
+    overflow: hidden;         
+    text-overflow: ellipsis;  
+    text-decoration: none;    
+    color: #007aff;           
+    font-weight: 500;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+    color: #005bb5;
+  }
+  
+  /* =========== Ladeanzeige & Kategorien einheitlich =========== */
+  #loading,
+  #kategorien {
+    width: 100%;
+    margin-top: 1em;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border-radius: 0.5em;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 1em;
+    text-align: center;
+    font-size: 1.2em;
   }
   
   #kategorien ul {
-    padding-left: 1em;
-    background: #f9f9f9;
-    border: 1px solid #ddd;
     margin-bottom: 1em;
-    
+    padding-left: 0;
+    text-align: left;
   }
   
-
+  #kategorien li {
+    border-bottom: 1px solid #ddd;
+  }
   
-/* Stil für die Meldung "Keine Ergebnisse gefunden." */ 
-#map {
+  /* =========== Kleine Karte (unten rechts) =========== */
+  #map {
     position: fixed;
     bottom: 10px;
     right: 10px;
@@ -101,8 +165,9 @@ footer {
     border: 2px solid #ccc;
     border-radius: 8px;
     overflow: hidden;
+    margin: 2em auto;    /* Nur horizontal zentrieren */
   }
-
+  
   #map:hover {
     height: 300px;
     width: 400px;

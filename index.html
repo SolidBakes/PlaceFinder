@@ -25,20 +25,24 @@
 </head>
 <body>
   <header>
-    <h1>PlaceFinder in Ihrer Nähe</h1>
+    <!-- GROSSE Überschrift -->
+    <h1 id="appTitle">PlaceFinder</h1>
+    <!-- Gefundener Ort -->
+    <div id="current-city">Wird gesucht...</div>
   </header>
 
   <main>
-    <!-- Suchleiste für manuelle Standortangabe -->
-    <div id="location-input">
-      <input type="text" id="address" placeholder="Geben Sie Ihren Standort ein" />
-      <button id="address-search">Suchen</button>
-    </div>
 
     <!-- Anzeige des verwendeten Stadtteils/Ortes -->
     <div id="current-city" style="margin-top:10px; font-weight:bold;"></div>
+    <div id="loading">Wird geladen ...</div>
+    <label for="searchRadius">Suchradius (in Metern): </label>
+    <input type="number" id="searchRadius" value="25000" min="1000" step="1000">
+    <button id="startSearchBtn" disabled>Suche starten</button>
 
-    <div id="loading">Standort wird ermittelt...</div>
+
+
+    
     <div id="kategorien" style="display: none;">
       <section id="essenTrinken">
         <h2>Essen & Trinken</h2>
@@ -53,7 +57,7 @@
         <ul id="listeFreizeitEinkaufen"></ul>
       </section>
     </div>
-<div id="map" style="position: fixed; bottom: 0; right: 0; height: 200px; width: 200px; display: none;"></div>
+<div id="map"></div>
   </main>
 
     <!-- <img class="background" src="/img/background.png"> -->
