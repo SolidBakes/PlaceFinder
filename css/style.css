@@ -157,6 +157,8 @@ html, body {
   /* =========== Kleine Karte (unten rechts) =========== */
   /* Für alle Geräte: etwas kleinere Standardgröße */
   #map {
+    display: none;
+    margin: 2em auto;
     position: fixed;
     bottom: 10px;
     right: 10px;

@@ -38,6 +38,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Jetzt, wo Koordinaten bekannt sind, Button freigeben
         startSearchBtn.disabled = false;
+        // Sobald du die Koordinaten hast und die Karte erzeugst:
+        mapDiv.style.display = 'block';
       },
       function(error) {
         console.error("Fehler bei der Standortbestimmung:", error);
