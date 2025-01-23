@@ -50,6 +50,7 @@ html, body {
        kein fixed- oder flex-Zwang */
     width: 100%;
     padding: 1em 0;
+    margin: 2em auto;
   }
   
   footer {
