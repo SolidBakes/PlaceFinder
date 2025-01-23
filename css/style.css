@@ -173,3 +173,6 @@ html, body {
     width: 400px;
   }
   
+  loading {
+    margin: 2em auto;
+  }
