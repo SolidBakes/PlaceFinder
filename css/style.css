@@ -174,6 +174,12 @@ html, body {
     width: 400px;
   }
   
-  loading {
-    margin: 2em auto;
+  .sliderContainer {
+    display: flex;
+    flex-direction: column;   /* Alle Elemente übereinander */
+    align-items: center;      /* Horizontal zentrieren */
+    justify-content: center;  /* Vertikal optional, falls gewünscht */
+    margin: 2em auto;         /* Abstand nach oben/unten und zentral in der Breite */
+    text-align: center;
   }
+  

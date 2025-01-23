@@ -2,14 +2,21 @@ let mapDiv;
 let userLatitude = null;    // Globale Variablen zum Speichern der Koordinaten
 let userLongitude = null;
 
+
+
 document.addEventListener('DOMContentLoaded', function() {
   const currentCityEl = document.getElementById('current-city');
   const loadingEl = document.getElementById('loading');
   const mapDiv = document.getElementById('map');
 
-  // Button und Input-Feld für Radius
   const radiusInput = document.getElementById('searchRadius');
-  const startSearchBtn = document.getElementById('startSearchBtn');
+  const radiusValueEl = document.getElementById('radiusValue');
+
+  // Wenn sich der Slider bewegt, Text updaten
+  radiusInput.addEventListener('input', function() {
+  radiusValueEl.textContent = radiusInput.value;
+});
+
 
   // Standort ermitteln
   if ("geolocation" in navigator) {
@@ -45,7 +52,8 @@ document.addEventListener('DOMContentLoaded', function() {
   startSearchBtn.addEventListener('click', function() {
     // Eingegebenen Wert holen und in Zahl umwandeln
     const inputValue = radiusInput.value;
-    const radius = parseInt(inputValue, 10) || 2000;
+    // Hol dir den aktuellen Wert vom Range-Input
+    const radius = parseInt(radiusInput.value, 10) || 2000;
 
     console.log(`Suche Orte im Radius von ${radius} Metern...`);
     // Unsere Places-Suche starten
