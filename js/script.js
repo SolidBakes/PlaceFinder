@@ -189,12 +189,12 @@ function initializePlaces(lat, lng, radius) {
   };
 
   const suchanfragen = [
-    { type: 'cafe', category: 'essenTrinken' },
     { type: 'restaurant', category: 'essenTrinken' },
     { type: 'gas_station', category: 'tankenAuto' },
     { type: 'car_repair', category: 'tankenAuto' },
     { type: 'shopping_mall', category: 'freizeitEinkaufen' },
-    { type: 'movie_theater', category: 'freizeitEinkaufen' }
+    { type: 'movie_theater', category: 'freizeitEinkaufen' },
+    { type: 'bar', category: 'freizeitEinkaufen' },
   ];
 
   let remainingRequests = suchanfragen.length;
