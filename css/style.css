@@ -155,21 +155,22 @@ html, body {
   }
   
   /* =========== Kleine Karte (unten rechts) =========== */
+  /* Für alle Geräte: etwas kleinere Standardgröße */
   #map {
     position: fixed;
     bottom: 10px;
     right: 10px;
-    height: 100px;
-    width: 150px;
+    height: 120px;
+    width: 180px;
     transition: all 0.3s ease;
     z-index: 1000;
     border: 2px solid #ccc;
     border-radius: 8px;
     overflow: hidden;
-    margin: 2em auto;    /* Nur horizontal zentrieren */
   }
-  
   #map:hover {
+  /* nur am Desktop vergrößern – 
+     wir überschreiben das gleich wieder via @media für kleine Bildschirme */
     height: 300px;
     width: 400px;
   }
@@ -182,4 +183,8 @@ html, body {
     margin: 2em auto;         /* Abstand nach oben/unten und zentral in der Breite */
     text-align: center;
   }
+  * {
+    box-sizing: border-box;
+  }
+  
   
