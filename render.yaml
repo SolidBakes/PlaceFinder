@@ -1,6 +1,6 @@
 services:
   - type: static_site
-    name: PlaceFinder
+    name: ScoutSpot
     env: static
     buildCommand: ""
     publishPath: "./"
