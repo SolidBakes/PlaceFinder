@@ -273,7 +273,6 @@ function getPlaceDetails(service, placeId, callback) {
  */
 function zeigeErgebnisseInKategorie(kategorieId, places, service) {
   const liste = document.getElementById(kategorieId);
-  // Liste ggf. leeren, falls du schon mal gesucht hast
   liste.innerHTML = '';
 
   if (places.length === 0) {
@@ -283,23 +282,21 @@ function zeigeErgebnisseInKategorie(kategorieId, places, service) {
     return;
   }
 
-  // Für jeden Place ein <li> erstellen und Detailinfos abrufen
   places.forEach(place => {
     const li = document.createElement('li');
 
-    // Wenn kein place_id vorhanden, können wir keine getDetails-Abfrage machen
+    // Kein place_id? -> kein getDetails möglich
     if (!place.place_id) {
       li.textContent = place.name || "Unbekannter Ort";
       liste.appendChild(li);
       return;
     }
 
-    // Details von der Places API holen
+    // Ort-Details abrufen
     getPlaceDetails(service, place.place_id, (details) => {
       if (!details) {
-        // Falls die Details-Abfrage scheitert, fallback
+        // Fallback, wenn getDetails fehlschlägt
         if (place.geometry && place.geometry.location) {
-          // Immerhin Koordinaten -> Koordinaten-Link
           const lat = place.geometry.location.lat();
           const lng = place.geometry.location.lng();
           const a = document.createElement('a');
@@ -308,105 +305,112 @@ function zeigeErgebnisseInKategorie(kategorieId, places, service) {
           a.textContent = place.name || "Unbekannter Ort";
           li.appendChild(a);
         } else {
-          // Weder place_id-Details noch geometry -> Nur Name
           li.textContent = place.name || "Unbekannter Ort";
         }
         return;
       }
 
-      // -----------------------------------------
-      // 1) NAME/LINK: Website > Google-Maps-URL > Koordinaten > Fallback
-      // -----------------------------------------
-      let linkElement = null;
+      // =========================
+      // 1) NAME (als erstes)
+      // =========================
+      const nameDiv = document.createElement('div');
+      nameDiv.classList.add('place-name'); // Optional für CSS
 
-      // a) Website:
       if (details.website) {
-        linkElement = document.createElement('a');
-        linkElement.href = details.website;
-        linkElement.target = '_blank';
-        linkElement.textContent = details.name || "Unbekannter Ort";
-        li.appendChild(linkElement);
-      }
-      // b) Google-Maps-URL:
-      else if (details.url) {
-        linkElement = document.createElement('a');
-        linkElement.href = details.url;
-        linkElement.target = '_blank';
-        linkElement.textContent = details.name || "Unbekannter Ort";
-        li.appendChild(linkElement);
-      }
-      // c) Koordinaten:
-      else if (details.geometry && details.geometry.location) {
+        // Website-Link
+        const link = document.createElement('a');
+        link.href = details.website;
+        link.target = '_blank';
+        link.textContent = details.name || "Unbekannter Ort";
+        nameDiv.appendChild(link);
+
+      } else if (details.url) {
+        // Google-Maps-URL
+        const link = document.createElement('a');
+        link.href = details.url;
+        link.target = '_blank';
+        link.textContent = details.name || "Unbekannter Ort";
+        nameDiv.appendChild(link);
+
+      } else if (details.geometry && details.geometry.location) {
+        // Nur Koordinaten-Link
         const lat = details.geometry.location.lat();
         const lng = details.geometry.location.lng();
-        linkElement = document.createElement('a');
-        linkElement.href = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
-        linkElement.target = '_blank';
-        linkElement.textContent = details.name || "Unbekannter Ort";
-        li.appendChild(linkElement);
-      }
-      // d) Falls gar nichts -> Nur Name
-      else {
-        li.textContent = details.name || "Unbekannter Ort";
+        const link = document.createElement('a');
+        link.href = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+        link.target = '_blank';
+        link.textContent = details.name || "Unbekannter Ort";
+        nameDiv.appendChild(link);
+
+      } else {
+        // Fallback: kein Link, nur Name
+        nameDiv.textContent = details.name || "Unbekannter Ort";
       }
 
-      // -----------------------------------------
-      // 2) ENTFERNUNG berechnen, falls geometry da
-      // -----------------------------------------
-      if (details.geometry && details.geometry.location) {
+      li.appendChild(nameDiv);
+
+      // =========================
+      // 2) ENTFERNUNG (darunter)
+      // =========================
+      if (details.geometry && details.geometry.location && google.maps.geometry?.spherical) {
         const lat = details.geometry.location.lat();
         const lng = details.geometry.location.lng();
 
-        if (google.maps.geometry && google.maps.geometry.spherical) {
-          const distance = google.maps.geometry.spherical.computeDistanceBetween(
-            new google.maps.LatLng(userLatitude, userLongitude),
-            new google.maps.LatLng(lat, lng)
-          );
-          // Formatieren (z. B. 843m oder 3.21km)
-          const distanceText = formatDistance(distance);
+        const distance = google.maps.geometry.spherical.computeDistanceBetween(
+          new google.maps.LatLng(userLatitude, userLongitude),
+          new google.maps.LatLng(lat, lng)
+        );
+        const distanceText = formatDistance(distance);
 
-          const distanceSpan = document.createElement('span');
-          distanceSpan.style.marginLeft = '8px';
-          distanceSpan.textContent = `Entfernung: ${distanceText}`;
-          li.appendChild(distanceSpan);
-        }
+        const distanceDiv = document.createElement('div');
+        distanceDiv.classList.add('place-distance'); // Optional für CSS
+        distanceDiv.textContent = `Entfernung: ${distanceText}`;
+        li.appendChild(distanceDiv);
       }
 
-      // -----------------------------------------
-      // 3) STERNE-BEWERTUNG (CSS oder Unicode)
-      // -----------------------------------------
+      // =========================
+      // 3) BEWERTUNG (am Ende)
+      // =========================
       if (details.rating !== undefined) {
-        // Variante: CSS-Sterne (du hast .stars-outer / .stars-inner im CSS)
+        // Du hast vermutlich im CSS .stars-outer und .stars-inner definiert
+        // Erzeugt z.B. 5 graue Sterne, und wir füllen sie je nach Prozentsatz mit Gold
+
+        const ratingDiv = document.createElement('div');
+        ratingDiv.classList.add('place-rating'); // Optional für CSS
+
+        // Outer-Sterne:
         const starsOuter = document.createElement('div');
         starsOuter.classList.add('stars-outer');
 
+        // Inner-Sterne:
         const starsInner = document.createElement('div');
         starsInner.classList.add('stars-inner');
 
         starsOuter.appendChild(starsInner);
-        li.appendChild(starsOuter);
+        ratingDiv.appendChild(starsOuter);
 
-        // Prozent-Anteil (z. B. 4.2 => 84%)
+        // Prozent ermitteln, z.B. 4.2 => 84%
         const maxRating = 5;
         const percentage = (details.rating / maxRating) * 100;
         starsInner.style.width = `${percentage}%`;
 
-        // Anzahl Bewertungen
+        // Anzahl der Bewertungen (optional)
         if (details.user_ratings_total !== undefined) {
-          const ratingInfo = document.createElement('span');
-          ratingInfo.style.marginLeft = '8px';
-          ratingInfo.textContent = `(${details.user_ratings_total} Bewertungen)`;
-          li.appendChild(ratingInfo);
+          const ratingCount = document.createElement('span');
+          ratingCount.style.marginLeft = '8px';
+          ratingCount.textContent = `(${details.user_ratings_total} Bewertungen)`;
+          ratingDiv.appendChild(ratingCount);
         }
+
+        li.appendChild(ratingDiv);
       }
-      // Falls kein Rating → nichts anzeigen
 
-    }); // getPlaceDetails Callback Ende
+    }); // getPlaceDetails Ende
 
-    // Am Ende li in die Liste einhängen
     liste.appendChild(li);
   });
 }
+
 
 
 function formatDistance(meters) {

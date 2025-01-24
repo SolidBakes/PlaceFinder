@@ -108,8 +108,25 @@ html, body {
   }
   
   li {
+    margin-bottom: 1em; 
     padding: 0.5em 0;
     border-bottom: 1px solid #ddd;
+  }
+
+  .place-name {
+    font-size: 1.1em;
+    font-weight: bold;
+    margin-bottom: 0.3em;
+  }
+  
+  .place-distance {
+    color: #555;
+    margin-bottom: 0.3em;
+  }
+  
+  .place-rating {
+    /* Stern-Darstellung etc. */
+    margin-bottom: 0.5em;
   }
   
   /* =========== Links: max 250px Breite + Text-Overflow =========== */
