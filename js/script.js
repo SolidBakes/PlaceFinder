@@ -283,105 +283,23 @@ function zeigeErgebnisseInKategorie(kategorieId, places, service) {
     return;
   }
 
+  // Für jeden Place ein <li> erstellen und Detailinfos abrufen
   places.forEach(place => {
     const li = document.createElement('li');
+
+    // Wenn kein place_id vorhanden, können wir keine getDetails-Abfrage machen
     if (!place.place_id) {
       li.textContent = place.name || "Unbekannter Ort";
       liste.appendChild(li);
       return;
     }
 
-    // Details abfragen
+    // Details von der Places API holen
     getPlaceDetails(service, place.place_id, (details) => {
-      if (details) {
-        // 1) Offizielle Website
-        if (details.website) {
-          const a = document.createElement('a');
-          a.href = details.website;
-          a.target = '_blank';
-          a.textContent = details.name || "Unbekannter Ort";
-          li.appendChild(a);
-        }
-        // 2) Google-Maps-URL
-        else if (details.url) {
-          const a = document.createElement('a');
-          a.href = details.url;
-          a.target = '_blank';
-          a.textContent = details.name || "Unbekannter Ort";
-          li.appendChild(a);
-        }
-        // 3) Koordinaten-Link
-        else if (details.geometry && details.geometry.location) {
-          const lat = details.geometry.location.lat();
-          const lng = details.geometry.location.lng();
-          const a = document.createElement('a');
-          a.href = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
-          a.target = '_blank';
-          a.textContent = details.name || "Unbekannter Ort";
-          li.appendChild(a);
-        } else {
-          // Fallback
-          li.textContent = details.name || "Unbekannter Ort";
-        }  
-        // 2) Falls Geokoordinaten vorhanden => Distanz ausrechnen
-        if (details.geometry && details.geometry.location) {
-          const lat = details.geometry.location.lat();
-          const lng = details.geometry.location.lng();
-
-        if (google.maps.geometry && google.maps.geometry.spherical) {
-          const distance = google.maps.geometry.spherical.computeDistanceBetween(
-              new google.maps.LatLng(userLatitude, userLongitude),
-              new google.maps.LatLng(lat, lng)
-      );
-    }
-  }
-      const distanceText = formatDistance(distance); // z. B. in km, gerundet
-      const distanceSpan = document.createElement('span');
-      distanceSpan.style.marginLeft = '8px';
-      distanceSpan.textContent = `Entfernung: ${distanceText}`;
-      li.appendChild(distanceSpan);    
-
-          
-        
-        // 2) Sterne-Rating per CSS (nur wenn 'details.rating' existiert)
-    if (details.rating !== undefined) {
-      // Outer-Div
-      const starsOuter = document.createElement('div');
-      starsOuter.classList.add('stars-outer');
-
-      // Inner-Div
-      const starsInner = document.createElement('div');
-      starsInner.classList.add('stars-inner');
-
-      // Reinsetzen
-      starsOuter.appendChild(starsInner);
-      li.appendChild(starsOuter);
-
-      // Breite berechnen (z.B. 4.2 von 5 => 84%)
-      const maxRating = 5;
-      const percentage = (details.rating / maxRating) * 100;
-      starsInner.style.width = `${percentage}%`;
-
-      // (Optional) Zahl oder Anzahl Bewertungen
-      if (details.user_ratings_total !== undefined) {
-        const ratingInfo = document.createElement('span');
-        ratingInfo.style.marginLeft = '8px';
-        ratingInfo.textContent = `(${details.user_ratings_total} Bewertungen)`;
-        li.appendChild(ratingInfo);
-      }
-    }
-
-    
-
-    // Falls KEIN rating -> nichts anzeigen
-
-        else {
-          // Fallback
-          li.textContent = details.name || "Unbekannter Ort";
-        }
-      } else {
-        // getDetails schlug fehl -> Koordinaten nutzen
+      if (!details) {
+        // Falls die Details-Abfrage scheitert, fallback
         if (place.geometry && place.geometry.location) {
+          // Immerhin Koordinaten -> Koordinaten-Link
           const lat = place.geometry.location.lat();
           const lng = place.geometry.location.lng();
           const a = document.createElement('a');
@@ -390,13 +308,106 @@ function zeigeErgebnisseInKategorie(kategorieId, places, service) {
           a.textContent = place.name || "Unbekannter Ort";
           li.appendChild(a);
         } else {
+          // Weder place_id-Details noch geometry -> Nur Name
           li.textContent = place.name || "Unbekannter Ort";
         }
+        return;
       }
-    });
+
+      // -----------------------------------------
+      // 1) NAME/LINK: Website > Google-Maps-URL > Koordinaten > Fallback
+      // -----------------------------------------
+      let linkElement = null;
+
+      // a) Website:
+      if (details.website) {
+        linkElement = document.createElement('a');
+        linkElement.href = details.website;
+        linkElement.target = '_blank';
+        linkElement.textContent = details.name || "Unbekannter Ort";
+        li.appendChild(linkElement);
+      }
+      // b) Google-Maps-URL:
+      else if (details.url) {
+        linkElement = document.createElement('a');
+        linkElement.href = details.url;
+        linkElement.target = '_blank';
+        linkElement.textContent = details.name || "Unbekannter Ort";
+        li.appendChild(linkElement);
+      }
+      // c) Koordinaten:
+      else if (details.geometry && details.geometry.location) {
+        const lat = details.geometry.location.lat();
+        const lng = details.geometry.location.lng();
+        linkElement = document.createElement('a');
+        linkElement.href = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+        linkElement.target = '_blank';
+        linkElement.textContent = details.name || "Unbekannter Ort";
+        li.appendChild(linkElement);
+      }
+      // d) Falls gar nichts -> Nur Name
+      else {
+        li.textContent = details.name || "Unbekannter Ort";
+      }
+
+      // -----------------------------------------
+      // 2) ENTFERNUNG berechnen, falls geometry da
+      // -----------------------------------------
+      if (details.geometry && details.geometry.location) {
+        const lat = details.geometry.location.lat();
+        const lng = details.geometry.location.lng();
+
+        if (google.maps.geometry && google.maps.geometry.spherical) {
+          const distance = google.maps.geometry.spherical.computeDistanceBetween(
+            new google.maps.LatLng(userLatitude, userLongitude),
+            new google.maps.LatLng(lat, lng)
+          );
+          // Formatieren (z. B. 843m oder 3.21km)
+          const distanceText = formatDistance(distance);
+
+          const distanceSpan = document.createElement('span');
+          distanceSpan.style.marginLeft = '8px';
+          distanceSpan.textContent = `Entfernung: ${distanceText}`;
+          li.appendChild(distanceSpan);
+        }
+      }
+
+      // -----------------------------------------
+      // 3) STERNE-BEWERTUNG (CSS oder Unicode)
+      // -----------------------------------------
+      if (details.rating !== undefined) {
+        // Variante: CSS-Sterne (du hast .stars-outer / .stars-inner im CSS)
+        const starsOuter = document.createElement('div');
+        starsOuter.classList.add('stars-outer');
+
+        const starsInner = document.createElement('div');
+        starsInner.classList.add('stars-inner');
+
+        starsOuter.appendChild(starsInner);
+        li.appendChild(starsOuter);
+
+        // Prozent-Anteil (z. B. 4.2 => 84%)
+        const maxRating = 5;
+        const percentage = (details.rating / maxRating) * 100;
+        starsInner.style.width = `${percentage}%`;
+
+        // Anzahl Bewertungen
+        if (details.user_ratings_total !== undefined) {
+          const ratingInfo = document.createElement('span');
+          ratingInfo.style.marginLeft = '8px';
+          ratingInfo.textContent = `(${details.user_ratings_total} Bewertungen)`;
+          li.appendChild(ratingInfo);
+        }
+      }
+      // Falls kein Rating → nichts anzeigen
+
+    }); // getPlaceDetails Callback Ende
+
+    // Am Ende li in die Liste einhängen
     liste.appendChild(li);
   });
 }
+
 
 function formatDistance(meters) {
   if (meters < 1000) {
