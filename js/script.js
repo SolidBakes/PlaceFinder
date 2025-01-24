@@ -254,7 +254,7 @@ function getPlaceDetails(service, placeId, callback) {
   service.getDetails(
     {
       placeId: placeId,
-      fields: ['name', 'website', 'url', 'geometry', 'rating', 'user_rating_total']
+      fields: ['name', 'website', 'url', 'geometry', 'rating', 'user_ratings_total']
     },
     (placeResult, status) => {
       if (status === google.maps.places.PlacesServiceStatus.OK) {
@@ -320,20 +320,35 @@ function zeigeErgebnisseInKategorie(kategorieId, places, service) {
           a.textContent = details.name || "Unbekannter Ort";
           li.appendChild(a);
         }
-              // (2) Bewertung anzeigen
-        if (details.rating !== undefined) {
-        // Beispiel: "4.3 von 5 (123 Bewertungen)"
-          const ratingSpan = document.createElement('span');
-          ratingSpan.style.marginLeft = '8px'; // kleiner Abstand zum Link
-          ratingSpan.textContent = `(${details.rating} von 5)`;
+        // 2) Sterne-Rating per CSS (nur wenn 'details.rating' existiert)
+    if (details.rating !== undefined) {
+      // Outer-Div
+      const starsOuter = document.createElement('div');
+      starsOuter.classList.add('stars-outer');
 
-          // Falls du auch user_ratings_total hast:
-        if (details.user_ratings_total !== undefined) {
-          ratingSpan.textContent += ` — ${details.user_ratings_total} Bewertungen`;
-        }
+      // Inner-Div
+      const starsInner = document.createElement('div');
+      starsInner.classList.add('stars-inner');
 
-          li.appendChild(ratingSpan);
+      // Reinsetzen
+      starsOuter.appendChild(starsInner);
+      li.appendChild(starsOuter);
+
+      // Breite berechnen (z.B. 4.2 von 5 => 84%)
+      const maxRating = 5;
+      const percentage = (details.rating / maxRating) * 100;
+      starsInner.style.width = `${percentage}%`;
+
+      // (Optional) Zahl oder Anzahl Bewertungen
+      if (details.user_ratings_total !== undefined) {
+        const ratingInfo = document.createElement('span');
+        ratingInfo.style.marginLeft = '8px';
+        ratingInfo.textContent = `(${details.user_ratings_total} Bewertungen)`;
+        li.appendChild(ratingInfo);
       }
+    }
+    // Falls KEIN rating -> nichts anzeigen
+
         else {
           // Fallback
           li.textContent = details.name || "Unbekannter Ort";

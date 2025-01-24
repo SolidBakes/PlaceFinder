@@ -189,4 +189,44 @@ html, body {
     box-sizing: border-box;
   }
   
-  
+  /* ... dein bisheriges CSS ... */
+
+/* ========================= */
+/* CSS-STARS via FontAwesome */
+/* ========================= */
+
+.stars-outer {
+  display: inline-block;
+  position: relative;
+  /* FontAwesome Font-Family (solid icons) */
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900; 
+  /* Stern-Größe anpassen nach Geschmack: */
+  font-size: 1.2rem;
+  color: #ccc; /* Farbe für die "leeren" Sterne */
+}
+
+/* Zeigt 5 leere Sterne (regulär) hintereinander an */
+.stars-outer::before {
+  content: "\f005 \f005 \f005 \f005 \f005"; /* 5 x Solid Star (fa-star) */
+  /* Alternativ: "\f006" => regular star */
+}
+
+/* .stars-inner legt sich darüber für gefüllte Sterne. */
+.stars-inner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  color: #f8ce0b; /* z.B. Gold */
+}
+
+/* Hier wieder die 5 Sterne, aber "gefüllt" */
+.stars-inner::before {
+  content: "\f005 \f005 \f005 \f005 \f005";
+}
+
+/* ========================= */
+/* Restliches CSS unverändert */
+/* ========================= */
