@@ -254,7 +254,7 @@ function getPlaceDetails(service, placeId, callback) {
   service.getDetails(
     {
       placeId: placeId,
-      fields: ['name', 'website', 'url', 'geometry']
+      fields: ['name', 'website', 'url', 'geometry', 'rating', 'user_rating_total']
     },
     (placeResult, status) => {
       if (status === google.maps.places.PlacesServiceStatus.OK) {
@@ -320,6 +320,20 @@ function zeigeErgebnisseInKategorie(kategorieId, places, service) {
           a.textContent = details.name || "Unbekannter Ort";
           li.appendChild(a);
         }
+              // (2) Bewertung anzeigen
+        if (details.rating !== undefined) {
+        // Beispiel: "4.3 von 5 (123 Bewertungen)"
+          const ratingSpan = document.createElement('span');
+          ratingSpan.style.marginLeft = '8px'; // kleiner Abstand zum Link
+          ratingSpan.textContent = `(${details.rating} von 5)`;
+
+          // Falls du auch user_ratings_total hast:
+        if (details.user_ratings_total !== undefined) {
+          ratingSpan.textContent += ` — ${details.user_ratings_total} Bewertungen`;
+        }
+
+          li.appendChild(ratingSpan);
+      }
         else {
           // Fallback
           li.textContent = details.name || "Unbekannter Ort";
@@ -360,6 +374,52 @@ function removeDuplicates(arr, key) {
     return true;
   });
 }
+
+/**
+ * Erzeugt eine einfache Sterneanzeige (z.B. 3.5 => 3 volle Sterne + 1 halben Stern).
+ */
+function createStarRating(rating) {
+  const maxStars = 5;
+  
+  // Ganze Sterne
+  const fullStars = Math.floor(rating);
+  // Prüfen, ob wir einen halben Stern brauchen
+  const halfStar = (rating - fullStars) >= 0.5;
+
+  let stars = '';
+  for (let i = 0; i < fullStars; i++) {
+    stars += '★'; // Volle Sterne
+  }
+  if (halfStar && fullStars < maxStars) {
+    stars += '⯪'; // Symbol für halben Stern, z.B. '⯨' / '⯪' / '☆' ...
+  }
+  
+  // Rest ggf. als leere Sterne
+  const remaining = maxStars - fullStars - (halfStar ? 1 : 0);
+  for (let j = 0; j < remaining; j++) {
+    stars += '☆';
+  }
+
+  return stars;
+}
+
+// ...
+// In deinem Callback:
+if (details.rating !== undefined) {
+  // Sterne
+  const stars = createStarRating(details.rating);
+  const ratingSpan = document.createElement('span');
+  ratingSpan.style.marginLeft = '8px';
+  
+  // z. B. so anzeigen: ★★★★☆ (4.5) - 123 Bewertungen
+  ratingSpan.textContent = ` ${stars} (${details.rating})`;
+  if (details.user_ratings_total !== undefined) {
+    ratingSpan.textContent += ` – ${details.user_ratings_total} Bewertungen`;
+  }
+
+  li.appendChild(ratingSpan);
+}
+
 
 
   
