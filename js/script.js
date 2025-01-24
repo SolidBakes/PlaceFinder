@@ -314,6 +314,23 @@ function zeigeErgebnisseInKategorie(kategorieId, places, service) {
         else if (details.geometry && details.geometry.location) {
           const lat = details.geometry.location.lat();
           const lng = details.geometry.location.lng();
+          if (google.maps.geometry && google.maps.geometry.spherical) {
+            // distance in METERN
+            const distance = google.maps.geometry.spherical.computeDistanceBetween(
+              new google.maps.LatLng(userLatitude, userLongitude),
+              new google.maps.LatLng(lat, lng)
+            );
+            
+            // z. B. in km umwandeln, auf 2 Nachkommastellen runden:
+            const distanceText = formatDistance(distance);
+            
+            // Jetzt in der Liste anzeigen:
+            const distanceSpan = document.createElement('span');
+            distanceSpan.style.marginLeft = '8px';
+            distanceSpan.textContent = `Entfernung: ${distanceText}`;
+            
+            li.appendChild(distanceSpan);
+          }
           const a = document.createElement('a');
           a.href = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
           a.target = '_blank';
@@ -371,6 +388,15 @@ function zeigeErgebnisseInKategorie(kategorieId, places, service) {
     liste.appendChild(li);
   });
 }
+
+function formatDistance(meters) {
+  if (meters < 1000) {
+    return `${meters.toFixed(0)} m`;
+  } else {
+    return `${(meters / 1000).toFixed(2)} km`;
+  }
+}
+
 
 /**
  * Entfernt Duplikate aus einem Array basierend auf einem Schlüssel
