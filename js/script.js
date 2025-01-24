@@ -254,7 +254,7 @@ function getPlaceDetails(service, placeId, callback) {
   service.getDetails(
     {
       placeId: placeId,
-      fields: ['name', 'website', 'url', 'geometry', 'rating', 'user_ratings_total']
+      fields: ['name', 'website', 'url', 'geometry', 'rating', 'user_ratings_total', 'photos']
     },
     (placeResult, status) => {
       if (status === google.maps.places.PlacesServiceStatus.OK) {
@@ -404,6 +404,20 @@ function zeigeErgebnisseInKategorie(kategorieId, places, service) {
 
         li.appendChild(ratingDiv);
       }
+      if (details.photos && details.photos.length > 0) {
+        // Erstes Foto nehmen
+        const photoUrl = details.photos[0].getUrl({ maxWidth: 300 });
+      
+        // Bild-Element erzeugen
+        const img = document.createElement('img');
+        img.src = photoUrl;
+        img.alt = details.name || "Foto";
+        img.style.width = "300px";    // oder CSS-Klasse anhängen
+        img.style.height = "auto";
+      
+        // In dein <li> oder wo auch immer einfügen
+        li.appendChild(img);
+      }      
 
     }); // getPlaceDetails Ende
 
